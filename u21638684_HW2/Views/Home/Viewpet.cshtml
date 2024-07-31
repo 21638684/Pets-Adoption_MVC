@@ -1,0 +1,77 @@
+﻿@model u21638684_HW2.Models.PostPetVM
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Meet <b>@Model.PetName!</b></h5>
+                </div>
+                <img class="card-img-top" src="@Model.Image" alt="@Model.PetName" style="max-height: 250px; object-fit: cover;">
+                <div class="card-body">
+                    <p class="card-text"><strong>Location:</strong> @Model.Location</p>
+                    <p class="card-text"><strong>Age:</strong> @Model.Age</p>
+                    <p class="card-text"><strong>Gender:</strong> @Model.Gender</p>
+                    <p class="card-text"><strong>Weight:</strong> @Model.Weight</p>
+                    <p class="card-text"><strong>Pet Story:</strong><br />@Model.PetStory</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">User Details</h5>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("Viewpet", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            @Html.HiddenFor(model => model.PetId)
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SelectedUserID, "Select User", new { @class = "control-label" })
+                            @Html.DropDownListFor(model => model.SelectedUserID, Model.UserList, "Select a User", new { @class = "form-control", @id = "UserId" })
+                            @Html.ValidationMessageFor(model => model.SelectedUserID)
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SelectedPhoneNumber, "Phone Number", new { @class = "control-label" })
+                            @Html.DropDownListFor(model => model.SelectedPhoneNumber, Model.PhoneList, "Select a Phone Number", new { @class = "form-control", @id = "PhoneNumber" })
+                            @Html.ValidationMessageFor(model => model.SelectedPhoneNumber)
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Adopt Now" class="btn btn-info btn-block" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@section Scripts {
+    <script>
+        // jQuery code to handle user selection and populate phone numbers dropdown
+        $(document).ready(function () {
+            $('#UserId').change(function () {
+                var userId = $(this).val();
+                $.ajax({
+                    url: '@Url.Action("GetPhoneNumbers", "Home")',
+                    type: 'GET',
+                    data: { userId: userId },
+                    success: function (data) {
+                        var phoneDropdown = $('#PhoneNumber');
+                        phoneDropdown.empty();
+                        $.each(data, function (index,item) {
+                            phoneDropdown.append($('<option>').val(item.Value).text(item.Text));
+                        });
+                    },
+                    error: function () {
+                        alert('Error occurred while fetching phone numbers.');
+                    }
+                });
+            });
+        });
+    </script>
+}

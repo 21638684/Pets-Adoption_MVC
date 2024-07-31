@@ -1,0 +1,123 @@
+﻿@model u21638684_HW2.Models.PostPetVM
+
+@{
+    ViewBag.Title = "Add Pet";
+}
+<div class="container mt-4">
+    <h2 class="mb-4">Post A Pet</h2>
+    <div class="card">
+        <div class="card-body">
+            @using (Html.BeginForm("Add", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+
+            <div class="row">
+                <div class="col-md-4">
+                    <h3>Your Details</h3>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SelectedUserID, "Select User", new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.SelectedUserID, Model.UserList, "Select a User", new { @class = "form-control",@id= "UserId" })
+                        @Html.ValidationMessageFor(model => model.SelectedUserID)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SelectedPhoneNumber, "Phone Number", new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.SelectedPhoneNumber, Model.PhoneList, "Select a Phone Number", new { @class = "form-control", @id= "PhoneNumber" })
+                        @Html.ValidationMessageFor(model => model.SelectedPhoneNumber)
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h3>Pet Details</h3>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PetName, "Pet Name", new { @class = "control-label" })
+                        @Html.TextBoxFor(model => model.PetName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.PetName)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Type, "Pet Type", new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.Type, Model.TypeList, "Select a Pet Type", new { @class = "form-control", @id = "Type" })
+                        @Html.ValidationMessageFor(model => model.Type)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Breed, "Pet Breed", new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.Breed, Model.BreedList, "Select a Pet Breed", new { @class = "form-control", @id = "Breed" })
+                        @Html.ValidationMessageFor(model => model.Breed)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Location, "Pet Location", new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.Location, Model.LocationList, "Select a Pet Location", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Location)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Age, "Pet Age", new { @class = "control-label" })
+                        @Html.TextBoxFor(model => model.Age, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Age)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Gender, "Pet Gender", new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.Gender, Model.GenderList, "Select a Pet Gender", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Gender)
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h3>Pet Details</h3>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Weight, "Pet Weight", new { @class = "control-label" })
+                        @Html.TextBoxFor(model => model.Weight, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Weight)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PetStory, "Pet Story", new { @class = "control-label" })
+                        @Html.TextAreaFor(model => model.PetStory, new { @class = "form-control", rows = 4 })
+                        @Html.ValidationMessageFor(model => model.PetStory)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ImageFile, "Pet Image", new { @class = "control-label" })
+                        <input type="file" name="ImageFile" id="ImageFile" />
+                        @Html.ValidationMessageFor(model => model.ImageFile)
+                    </div>
+                </div>
+                </div>
+
+                <div class="form-group text-right mt-4">
+                    <input type="submit" value="Post" class="btn btn-info btn-lg" />
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Return to Home</a>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Handle user selection change
+        $("#UserId").change(function () {
+            var userId = $(this).val();
+            $.get("/Home/GetPhoneNumbers", { userId: userId }, function (data) {
+                $("#PhoneNumber").empty();
+                $.each(data, function (i, item) {
+                    $("#PhoneNumber").append($('<option>', {
+                        value: item.Value,
+                        text: item.Text
+                    }));
+                });
+            });
+        });
+
+        // Handle pet type selection change
+        $("#Type").change(function () {
+            var petType = $(this).val();
+            $.get("/Home/GetBreedsForType", { petType: petType }, function (data) {
+                $("#Breed").empty();
+                $.each(data, function (i, item) {
+                    $("#Breed").append($('<option>', {
+                        value: item.Value,
+                        text: item.Text
+                    }));
+                });
+            });
+        });
+    });
+</script>

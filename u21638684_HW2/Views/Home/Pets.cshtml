@@ -1,0 +1,94 @@
+﻿@model u21638684_HW2.Models.PostPetVM
+<h2 class="mt-4 mb-4">Available Pets for Adoption</h2>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            @using (Html.BeginForm("Pets", "Home", FormMethod.Get))
+            {
+                <div class="filter-controls mb-3">
+                    @Html.HiddenFor(model => model.PetId)
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Type, "Pet Type", new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.Type, Model.TypeList, "Select a Pet Type", new { @class = "form-control", @id = "Type" })
+                        @Html.ValidationMessageFor(model => model.Type)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Breed, "Pet Breed", new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.Breed, Model.BreedList, "Select a Pet Breed", new { @class = "form-control", @id = "Breed" })
+                        @Html.ValidationMessageFor(model => model.Breed)
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Location, "Pet Location", new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.Location, Model.LocationList, "Select a Pet Location", new { @class = "form-control", @id = "location" })
+                        @Html.ValidationMessageFor(model => model.Location)
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Search" class="btn btn-info" />
+                        <button type="button" class="btn btn-warning" onclick="clearForm()">Clear</button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-md-9">
+            <div class="row pet-container">
+                @foreach (var pet in Model.PetList)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card pet-card">
+                            <img src="@Url.Content(pet.Image)" class="card-img-top" alt="@pet.PetName" width="250" height="250">
+                            <div class="card-body">
+                                <h5 class="card-title">@pet.PetName</h5>
+                                <p class="card-text">Location: @pet.Location</p>
+                                <p class="card-text">Age: @pet.Age</p>
+                                <p class="card-text">Gender: @pet.Gender</p>
+                                <p class="card-text">Weight: @pet.Weight</p>
+                                <p class="card-text">Status: @pet.Status</p>
+                                <p class="card-text">Posted by: @pet.LastName</p>
+                                <a href="@Url.Action("Viewpet", "Home", new {id=pet.PetId})" class="btn btn-info btn-block">View</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mt-4">
+    <a href="@Url.Action("Add", "Home")" class="btn btn-secondary">Back</a>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#Type").change(function () {
+            var selectedType = $(this).val();
+            $.ajax({
+                url: '/Home/GetBreedsForType',
+                type: 'GET',
+                data: { petType: selectedType },
+                success: function (breeds) {
+                    $("#Breed").empty();
+                    $.each(breeds, function (index, breed) {
+                        $("#Breed").append($('<option>', {
+                            value: breed.Value,
+                            text: breed.Text
+                        }));
+                    });
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+
+    function clearForm() {
+        $("#Type").val("");
+        $("#Breed").val("");
+        $("#location").val("");
+
+    }
+</script>
+

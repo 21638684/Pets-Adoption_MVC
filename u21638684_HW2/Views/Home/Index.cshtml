@@ -1,0 +1,66 @@
+﻿
+@{
+    ViewBag.Title = "Home Page";
+}
+<style>
+    .hero-section {
+        background-image: url('../images/banner.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        height: 350px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color:springgreen;
+    }
+    p{
+        font-size:24px
+    }
+</style>
+
+<body>
+    <div class="hero-section">
+        <h2>Adopt love, Foster happiness</h2>
+        <div>
+            <p>
+                With a focus on matching the right pet with the right family, we make it easy to adopt love and foster
+                happiness.
+            </p>
+           
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="card p-4 mb-4">
+            @if (Model != null)
+            {
+                <p>Number of adopted Pets: @Model.AdoptedPetsCount</p>
+            }
+            else
+            {
+                <p>Model is null</p>
+            }
+            <ul class="list-unstyled">
+                @if (Model != null && Model.AdoptedPetsList != null)
+                {
+                    foreach (var adoptedPet in Model.AdoptedPetsList)
+                    {
+                        <li>@adoptedPet.PetName is adopted by @adoptedPet.UserName</li>
+                    }
+                }
+                else
+                {
+                    <li>No adopted pets found.</li>
+                }
+            </ul>
+            <div class="text-right">
+                <a href="@Url.Action("Add", "Home")" class="btn btn-info">Post Pets</a>
+                <a href="@Url.Action("Pets", "Home")" class="btn btn-warning">View Pets</a>
+                <a href="@Url.Action("Donate", "Home")" class="btn btn-success">Donate!</a>
+            </div>
+        </div>
+        </div>
+</body>
+

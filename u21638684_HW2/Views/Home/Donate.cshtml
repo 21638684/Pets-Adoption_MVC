@@ -1,0 +1,129 @@
+﻿@model u21638684_HW2.Models.PostPetVM
+@{
+    ViewBag.Title = "Donate";
+}
+<style>
+    .image-container img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            text-align: center;
+        }
+
+        .progress {
+            height: 30px;
+        }
+
+        .progress-bar {
+            font-size: 18px;
+        }
+
+        .formcont {
+            margin-top: 20px;
+        }
+    </style>
+
+<body>
+    <div class="container">
+        <div class="b-div">
+            <h2>Donate Now!<br>And help us reach our goal!</h2>
+            <div class="p">
+                <h6>Why Donate?</h6>
+                <p>
+                    Your contribution provides shelter, medical care, and love to abandoned or mistreated pets, giving them a chance for a happy, fulfilling life. By donating, you not only support these animals but also promote compassion, empathy, and a better world for all living beings. Your kindness today creates a brighter tomorrow for these innocent creatures.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="formcont">
+                            @using (Html.BeginForm("Donate", "Home", FormMethod.Post, new { @class = "needs-validation", novalidate = "true" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.SelectedUserID, "Select User", new { @class = "control-label" })
+                                    @Html.DropDownListFor(model => model.SelectedUserID, Model.UserList, "Select a User", new { @class = "form-control", @id = "UserId", required = "true" })
+                                    <div class="invalid-feedback">Please select a user.</div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.SelectedPhoneNumber, "Phone Number", new { @class = "control-label" })
+                                    @Html.DropDownListFor(model => model.SelectedPhoneNumber, Model.PhoneList, "Select a Phone Number", new { @class = "form-control", @id = "PhoneNumber", required = "true" })
+                                    <div class="invalid-feedback">Please select a phone number.</div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Amount, "Donation Amount:")
+                                    @Html.TextBoxFor(model => model.Amount, new { @class = "form-control", required = "true" })
+                                    <div class="invalid-feedback">Please enter a valid donation amount.</div>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-info">Make A Donation</button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="image-container mt-4">
+                    <img src="~/Images/Thanks.jpg" class="img-fluid" alt="Thank You Image">
+                </div>
+            </div>
+        </div>
+        <div class="progress mt-4">
+            <div class="progress-bar @((Model.GoalReached) ? "progress-bar-success" : "progress-bar-warning")"
+                 role="progressbar" aria-valuenow="@(Model.TotalDonatedAmount /Model.DonationGoal * 100)"
+                 aria-valuemin="0" aria-valuemax="100"
+                 style="width: @(Model.TotalDonatedAmount / Model.DonationGoal* 100)%;">
+                @(Model.TotalDonatedAmount / Model.DonationGoal * 100)% Complete
+            </div>
+        </div>
+
+        <p class="mt-2">Total Donated: R@(Model.TotalDonatedAmount)</p>
+
+        @if (Model.GoalReached)
+        {
+            <div class="alert alert-success" role="alert">
+                Goal Reached! Thank you for your donations!
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info" role="alert">
+                Help us reach our goal! Donate now.
+            </div>
+        }
+    </div>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            @section Scripts {
+                <script>
+        $(document).ready(function () {
+            $('#UserId').change(function () {
+                var userId = $(this).val();
+                $.ajax({
+                    url: '@Url.Action("GetPhoneNumbers", "Home")',
+                    type: 'GET',
+                    data: { userId: userId },
+                    success: function (data) {
+                        var phoneDropdown = $('#PhoneNumber');
+                        phoneDropdown.empty();
+                        $.each(data, function (index, item) {
+                            phoneDropdown.append($('<option>').val(item.Value).text(item.Text));
+                        });
+                    },
+                });
+            });
+        });
+
+                </script>
+            }
+        </body>
+
+
+
